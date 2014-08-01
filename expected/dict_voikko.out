@@ -12,3 +12,9 @@ select ts_lexize('voikko', 'kissoja');
  {kissa}
 (1 row)
 
+select ts_lexize('voikko', 'kerrostalollekohan');
+ ts_lexize   
+-----------
+ {kerros,talo}
+(1 row)
+
