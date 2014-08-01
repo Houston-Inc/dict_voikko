@@ -1,0 +1,14 @@
+CREATE EXTENSION dict_voikko;
+--lexize
+select ts_lexize('voikko', 'kissa');
+ ts_lexize 
+-----------
+ {kissa}
+(1 row)
+
+select ts_lexize('voikko', 'kissoja');
+ ts_lexize 
+-----------
+ {kissa}
+(1 row)
+
