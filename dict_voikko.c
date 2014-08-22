@@ -3,6 +3,10 @@
  * dict_voikko.c
  *	  Text search dictionary for Finnish using Voikko
  *
+ * Copyright (c) 2014, Houston Inc.
+ *
+ * Author: Petter Ljungqvist (petter.ljungqvist@houston-inc.com)
+ *
  * IDENTIFICATION
  *	  contrib/dict_voikko/dict_voikko.c
  *
