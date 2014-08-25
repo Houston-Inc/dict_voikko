@@ -8,7 +8,7 @@ PostgreSQL full text search dictionary extension utilizing the Finnish dictionar
 Dependencies
 ------------
 
-The dictionary needs [libvoikki](http://voikko.puimula.org/) and its dependencies. A suomi-malaga dictionary with morphological analysis for Voikko is neede (e.g. dict-morpho from [http://www.puimula.org/htp/testing/voikko-snapshot/](http://www.puimula.org/htp/testing/voikko-snapshot/)) and at the moment it needs to be called **mor--morpho**.
+The dictionary needs [libvoikki](http://voikko.puimula.org/) and its dependencies. A suomi-malaga dictionary with morphological analysis for Voikko is neede (e.g. dict-morpho from [http://www.puimula.org/htp/testing/voikko-snapshot/](http://www.puimula.org/htp/testing/voikko-snapshot/)) and at the moment it needs to be called **mor-morpho**.
 
 Installation
 ------------
