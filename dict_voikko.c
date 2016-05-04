@@ -70,6 +70,10 @@ Datum dvoikko_init(PG_FUNCTION_ARGS) {
 	}
 
 	d->voikko = voikkoInit(&voikko_error, "fi-x-morpho", 0);
+	if (!d->voikko) {
+		ereport(ERROR, (errcode(ERRCODE_INTERNAL_ERROR),
+				errmsg("voikko error: \"%s\"", voikko_error)));
+	}
     
     d->regex_stem = palloc0(sizeof(regex_t));
     if (regcomp(d->regex_stem, "\\((([a-zA-Z]|ä|ö|Ä|Ö)+)\\)", REG_EXTENDED))
