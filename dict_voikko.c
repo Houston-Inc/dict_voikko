@@ -139,42 +139,44 @@ Datum dvoikko_lexize(PG_FUNCTION_ARGS) {
 		res = palloc0(sizeof(TSLexeme) * 2);
 	} else /*if (VOIKKO_SPELL_OK == voikkoSpellCstr(d->voikko, txt))*/ {
         struct voikko_mor_analysis ** analysis_arr = voikkoAnalyzeWordCstr(d->voikko, txt);
-        struct voikko_mor_analysis * analysis = analysis_arr[0];
-        if (analysis) {
-            char * base_ = voikko_mor_analysis_value_cstr(analysis, "WORDBASES");
-            if (base_) {
-                res = palloc0(sizeof(TSLexeme));
-                res[0].lexeme = NULL;
-                lex_n = palloc0(sizeof(int));
-                *lex_n = 0;
-                base = removeEqualSign(base_);
-                voikko_free_mor_analysis_value_cstr(base_);
-                p = base;
-                while (!regexec(d->regex_stem, p, nmatch, matchptr, 0)) {
-                    matchp = matchptr[1];
-                    res = add_lexeme(res, lex_n, p + matchp.rm_so, matchp.rm_eo - matchp.rm_so);
-                    p += matchptr[0].rm_eo;
+        if (analysis_arr) {
+            struct voikko_mor_analysis * analysis = analysis_arr[0];
+            if (analysis) {
+                char * base_ = voikko_mor_analysis_value_cstr(analysis, "WORDBASES");
+                if (base_) {
+                    res = palloc0(sizeof(TSLexeme));
+                    res[0].lexeme = NULL;
+                    lex_n = palloc0(sizeof(int));
+                    *lex_n = 0;
+                    base = removeEqualSign(base_);
+                    voikko_free_mor_analysis_value_cstr(base_);
+                    p = base;
+                    while (!regexec(d->regex_stem, p, nmatch, matchptr, 0)) {
+                        matchp = matchptr[1];
+                        res = add_lexeme(res, lex_n, p + matchp.rm_so, matchp.rm_eo - matchp.rm_so);
+                        p += matchptr[0].rm_eo;
+                    }
+                    
+                    p = base;
+                    while (!regexec(d->regex_suff, p, nmatch, matchptr, 0)) {
+                        regmatch_t match_b = matchptr[1];
+                        regmatch_t match_s = matchptr[5];
+                        int len_b = match_b.rm_eo - match_b.rm_so, len_s = match_s.rm_eo - match_s.rm_so;
+                        match = palloc0(sizeof(char) * (len_b + len_s));
+                        memcpy(match, p + match_b.rm_so, len_b);
+                        memcpy(match + len_b, p + match_s.rm_so, len_s);
+                        res = add_lexeme(res, lex_n, match, len_b + len_s);
+                        pfree(match);
+                        p += matchptr[0].rm_eo;
+                    }
+                    
+                    pfree(base);
+                    pfree(lex_n);
                 }
-                
-                p = base;
-                while (!regexec(d->regex_suff, p, nmatch, matchptr, 0)) {
-                    regmatch_t match_b = matchptr[1];
-                    regmatch_t match_s = matchptr[5];
-                    int len_b = match_b.rm_eo - match_b.rm_so, len_s = match_s.rm_eo - match_s.rm_so;
-                    match = palloc0(sizeof(char) * (len_b + len_s));
-                    memcpy(match, p + match_b.rm_so, len_b);
-                    memcpy(match + len_b, p + match_s.rm_so, len_s);
-                    res = add_lexeme(res, lex_n, match, len_b + len_s);
-                    pfree(match);
-                    p += matchptr[0].rm_eo;
-                }
-                
-                pfree(base);
-                pfree(lex_n);
             }
+
+            voikko_free_mor_analysis(analysis_arr);
         }
-        
-        voikko_free_mor_analysis(analysis_arr);
     }
     
     pfree(txt);
